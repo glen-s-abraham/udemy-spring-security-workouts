@@ -66,10 +66,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	
 
 	
-	@Bean
-	public UserDetailsService userDetailsService(DataSource datasource) {
-		return new JdbcUserDetailsManager(datasource);
-	}
+//	@Bean
+//	public UserDetailsService userDetailsService(DataSource datasource) {
+//		return new JdbcUserDetailsManager(datasource);
+//	}
 	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
