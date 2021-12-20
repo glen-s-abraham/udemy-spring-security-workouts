@@ -20,16 +20,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	 */
 
 	protected void configure(HttpSecurity http) throws Exception {
+//		http.authorizeRequests()
+//		.antMatchers("/myAccount").authenticated()
+//		.antMatchers("/myBalance").authenticated()
+//		.antMatchers("/myLoans").authenticated()
+//		.antMatchers("/myCards").authenticated()
+//		.antMatchers("/notices").permitAll()
+//		.antMatchers("/contact").permitAll()
+//		.and()
+//		.formLogin()
+//		.and()
+//		.httpBasic();
+		
+		//Deny all requests
 		http.authorizeRequests()
-		.antMatchers("/myAccount").authenticated()
-		.antMatchers("/myBalance").authenticated()
-		.antMatchers("/myLoans").authenticated()
-		.antMatchers("/myCards").authenticated()
-		.antMatchers("/notices").permitAll()
-		.antMatchers("/contact").permitAll()
+		.anyRequest()
+		.denyAll()
 		.and()
 		.formLogin()
 		.and()
 		.httpBasic();
+		
+	
 	}
 }
