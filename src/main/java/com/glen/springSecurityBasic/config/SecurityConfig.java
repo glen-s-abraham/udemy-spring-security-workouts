@@ -33,14 +33,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 //		.httpBasic();
 		
 		//Deny all requests
+//		http.authorizeRequests()
+//		.anyRequest()
+//		.denyAll()
+//		.and()
+//		.formLogin()
+//		.and()
+//		.httpBasic();
+		
+		//Permit All requests
 		http.authorizeRequests()
 		.anyRequest()
-		.denyAll()
+		.permitAll()
 		.and()
 		.formLogin()
 		.and()
 		.httpBasic();
-		
-	
 	}
 }
