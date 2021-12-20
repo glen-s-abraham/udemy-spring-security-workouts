@@ -1,14 +1,18 @@
 package com.glen.springSecurityBasic.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.core.GrantedAuthorityDefaults;
-import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
@@ -38,11 +42,26 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 		
 	}
 	
-	@SuppressWarnings("deprecation")
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication()
-		.withUser("admin").password("password").authorities("admin")
-		.and().withUser("user").password("password").authorities("read")
-		.and().passwordEncoder(NoOpPasswordEncoder.getInstance());
+	
+//	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//		auth.inMemoryAuthentication()
+//		.withUser("admin").password("password").authorities("admin")
+//		.and().withUser("user").password("password").authorities("read")
+//		.and().passwordEncoder(NoOpPasswordEncoder.getInstance());
+//	}
+	
+	protected void configure(AuthenticationManagerBuilder auth)throws Exception{
+		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+		UserDetails admin = User.withUsername("admin").password("password").authorities("admin").build();
+		UserDetails user = User.withUsername("user").password("password").authorities("read").build();
+		userDetailsManager.createUser(admin);
+		userDetailsManager.createUser(user);
+		auth.userDetailsService(userDetailsManager);
 	}
+	
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance();
+	}
+	
 }
