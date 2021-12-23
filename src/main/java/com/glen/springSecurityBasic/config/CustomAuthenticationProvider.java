@@ -1,0 +1,56 @@
+package com.glen.springSecurityBasic.config;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.glen.springSecurityBasic.entities.User;
+import com.glen.springSecurityBasic.repository.UserRepository;
+
+
+
+public class CustomAuthenticationProvider implements AuthenticationProvider{
+
+	UserRepository userRepository;
+	PasswordEncoder passwordEncoder;
+	
+	
+	@Autowired
+	public CustomAuthenticationProvider(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
+	}
+
+	@Override
+	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+		String username = authentication.getName();
+		String password = authentication.getCredentials().toString();
+		List<User> user = userRepository.findByUsername(username);
+		if(user.size()>0) {
+			if(passwordEncoder.matches(password,user.get(0).getPassword())) {
+				List <GrantedAuthority> authorities = new ArrayList<>();
+				authorities.add(new SimpleGrantedAuthority(user.get(0).getRole()));
+				return new UsernamePasswordAuthenticationToken(username, password, authorities);
+			}else {
+				throw new BadCredentialsException("Invalid password");
+			}
+		}else {
+			throw new BadCredentialsException("Invalid Details");
+		}
+	}
+
+	@Override
+	public boolean supports(Class<?> authentication) {
+		return authentication.equals(UsernamePasswordAuthenticationToken.class);
+	}
+
+}
