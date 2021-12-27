@@ -1,5 +1,8 @@
 package com.glen.springSecurityBasic.config;
 
+import java.util.Collections;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -16,6 +19,9 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -33,7 +39,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
 	 */
 
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests()
+		http
+		.cors()
+		.configurationSource(new CorsConfigurationSource() {
+			@Override
+			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+				CorsConfiguration cors = new CorsConfiguration();
+				cors.setAllowedOrigins(Collections.singletonList("*"));
+				cors.setAllowedMethods(Collections.singletonList("*"));
+				cors.setAllowedHeaders(Collections.singletonList("*"));
+				cors.setMaxAge(3600L);
+				cors.setAllowCredentials(true);
+				return cors;
+			}
+		})
+		.and()
+		.csrf()
+		.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+		.and()
+		.authorizeRequests()
 		.antMatchers("/myAccount").authenticated()
 		.antMatchers("/myBalance").authenticated()
 		.antMatchers("/myLoans").authenticated()
