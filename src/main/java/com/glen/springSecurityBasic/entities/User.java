@@ -1,12 +1,18 @@
 package com.glen.springSecurityBasic.entities;
 
 
+import java.util.Set;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "users")
@@ -22,6 +28,10 @@ public class User {
 	private String password;
 	@Column(nullable = false)
 	private String role;
+	
+	@JsonIgnore
+	@OneToMany(mappedBy = "user",fetch = FetchType.EAGER)
+	private Set<Authority> authorities;
 	
 	public String getRole() {
 		return role;
@@ -50,6 +60,13 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public Set<Authority> getAuthorities() {
+		return authorities;
+	}
+	public void setAuthorities(Set<Authority> authorities) {
+		this.authorities = authorities;
+	}
+	
 	
 	
 	
